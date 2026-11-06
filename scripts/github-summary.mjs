@@ -66,7 +66,7 @@ const lines = [
 ];
 
 if (allureReportUrl) {
-  lines.push('', `📊 [Download the Allure HTML report](${allureReportUrl})`);
+  lines.push('', `📊 [Allure HTML report](${allureReportUrl})`);
 }
 
 const problems = tests.filter(({ test }) => test.status === 'unexpected' || test.status === 'flaky');

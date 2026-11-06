@@ -2,6 +2,8 @@
 
 End-to-end test suite for the Interesse car insurance quoter, built with Playwright + TypeScript and reported with Allure. Tests run against the UAT environment (`https://i365-uat.interesse.com.mx`) on Chromium.
 
+📊 **Latest test report (Allure):** [adrian33cc.github.io/qa-interesse](https://adrian33cc.github.io/qa-interesse/)
+
 ## Quick start
 
 Requirements: Node.js LTS and pnpm.
@@ -50,7 +52,8 @@ pnpm test --grep-invert @flaky
 |-------|-----|
 | Local | `pnpm report` opens the Allure report from `allure-results/`. |
 | Local (single HTML file) | `pnpm exec allure awesome allure-results --single-file --output allure-report` |
-| CI | Download the `allure-report` artifact from the workflow run, or read the job summary. |
+| CI (public) | Latest `main` report on GitHub Pages: <https://adrian33cc.github.io/qa-interesse/> |
+| CI (signed in) | Download the `allure-report` artifact from the workflow run, or read the job summary. |
 
 Failed tests attach a screenshot. On CI, failed tests retry and record a trace on the first retry.
 
@@ -71,7 +74,10 @@ Failed tests attach a screenshot. On CI, failed tests retry and record a trace o
 1. Install dependencies and Chromium.
 2. Run the suite (2 retries, 1 worker).
 3. Generate a single-file Allure report and upload it as an artifact (30 days).
-4. Publish a results summary on the job page.
+4. On pushes, deploy that report to GitHub Pages, even when tests fail. Each push replaces the previous report.
+5. Publish a results summary on the job page.
+
+Artifacts and job summaries require a GitHub login, even on a public repository. The GitHub Pages URL does not.
 
 ## Known issues
 

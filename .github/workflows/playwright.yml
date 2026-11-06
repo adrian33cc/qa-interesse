@@ -4,6 +4,10 @@ on:
     branches: [ main, master ]
   pull_request:
     branches: [ main, master ]
+
+permissions:
+  contents: read
+
 jobs:
   test:
     timeout-minutes: 60
@@ -38,8 +42,36 @@ jobs:
         path: allure-report/
         retention-days: 30
 
+    # Artifacts and job summaries require a GitHub login, even on public repositories.
+    # GitHub Pages gives the report a public URL. Only pushes publish it, so pull
+    # requests never overwrite the report of the main branch.
+    - name: Upload Allure report for GitHub Pages
+      if: ${{ !cancelled() && github.event_name == 'push' }}
+      uses: actions/upload-pages-artifact@v3
+      with:
+        path: allure-report/
+
     - name: Publish GitHub job summary
       if: ${{ !cancelled() }}
       env:
-        ALLURE_REPORT_URL: ${{ steps.upload-allure.outputs.artifact-url }}
+        ALLURE_REPORT_URL: ${{ github.event_name == 'push' && format('https://{0}.github.io/{1}/', github.repository_owner, github.event.repository.name) || steps.upload-allure.outputs.artifact-url }}
       run: node scripts/github-summary.mjs reports/playwright-results.json
+
+  deploy-report:
+    needs: test
+    # Runs even when tests fail: a failing run is the report most worth sharing.
+    if: ${{ !cancelled() && github.event_name == 'push' }}
+    runs-on: ubuntu-latest
+    permissions:
+      pages: write
+      id-token: write
+    environment:
+      name: github-pages
+      url: ${{ steps.deployment.outputs.page_url }}
+    concurrency:
+      group: pages
+      cancel-in-progress: false
+    steps:
+    - name: Deploy Allure report to GitHub Pages
+      id: deployment
+      uses: actions/deploy-pages@v4
