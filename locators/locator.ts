@@ -36,5 +36,25 @@ export const quoteResultsLocators = (page: Page) => {
     coverageSelect: main.getByText('Selecciona una Cobertura', { exact: true }).locator('xpath=following::select[1]'),
     paymentSelect: main.getByText('Selecciona la Forma de Pago', { exact: true }).locator('xpath=following::select[1]'),
     insurerPremium: (logoId: string) => insurerCard(logoId).getByRole('heading', { level: 1 }),
+    addCoveragesButton: (logoId: string) => insurerCard(logoId).getByRole('button', { name: 'Añadir coberturas' }),
+  };
+};
+
+/**
+ * "Añadir coberturas" panel. A control's accessible name is its row title followed by its label
+ * (e.g. "Robo Parcial Robo Parcial Suma Asegurada $30,000"), so controls are matched by the label they contain.
+ */
+export const optionalCoveragesLocators = (page: Page) => {
+  const main = page.getByRole('main');
+  // Premium summary below the panel: one row per concept, the amount is its last cell.
+  const summaryAmount = (concept: string) =>
+    main.getByRole('row', { name: new RegExp(`^${concept}`) }).filter({ visible: true }).getByRole('cell').last();
+
+  return {
+    checkbox: (label: string) => main.getByRole('checkbox', { name: label }).filter({ visible: true }),
+    radio: (label: string) => main.getByRole('radio', { name: label }).filter({ visible: true }),
+    recalculateButton: main.getByRole('button', { name: 'Recotizar' }).filter({ visible: true }),
+    optionalCoveragesCost: summaryAmount('Costo total de coberturas adicionales'),
+    premiumWithCoverages: summaryAmount('Prima total con coberturas'),
   };
 };

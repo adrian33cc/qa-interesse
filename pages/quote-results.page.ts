@@ -25,6 +25,10 @@ export class QuoteResultsPage {
     await this.selectIfChanged(this.locators.paymentSelect, payment);
   }
 
+  async openOptionalCoverages(logoId: string): Promise<void> {
+    await this.locators.addCoveragesButton(logoId).click();
+  }
+
   /** Reads every insurer card in parallel. A card that does not show up in time means "not quoted". */
   async readInsurerStatus(insurers: readonly InsurerDefinition[], timeout = 30_000): Promise<InsurerStatus[]> {
     return Promise.all(

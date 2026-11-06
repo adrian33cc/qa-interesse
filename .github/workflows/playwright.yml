@@ -19,9 +19,23 @@ jobs:
       run: pnpm exec playwright install --with-deps
     - name: Run Playwright tests
       run: pnpm exec playwright test
-    - uses: actions/upload-artifact@v4
+
+    # Single-file HTML so the downloaded artifact opens directly in a browser
+    # (a multi-file Allure report needs a web server to load its data).
+    - name: Generate Allure HTML report
       if: ${{ !cancelled() }}
+      run: pnpm exec allure awesome allure-results --single-file --output allure-report --report-name "Interesse QA - Run #${{ github.run_number }}"
+    - name: Upload Allure HTML report
+      id: upload-allure
+      if: ${{ !cancelled() }}
+      uses: actions/upload-artifact@v4
       with:
-        name: playwright-report
-        path: playwright-report/
+        name: allure-report
+        path: allure-report/
         retention-days: 30
+
+    - name: Publish GitHub job summary
+      if: ${{ !cancelled() }}
+      env:
+        ALLURE_REPORT_URL: ${{ steps.upload-allure.outputs.artifact-url }}
+      run: node scripts/github-summary.mjs reports/playwright-results.json
