@@ -3,6 +3,7 @@ import { vehicleSearchLocators } from '../locators/locator';
 
 const QUOTER_PATH = '/autocotiza/interesse';
 const CONFIG_ENDPOINT = '/autocotiza/loadconfig/';
+const NO_RESULTS_OPTION = 'No se encontraron resultados';
 
 /** Quoter landing page: vehicle search. Actions only, assertions live in the tests. */
 export class QuoterPage {
@@ -21,5 +22,10 @@ export class QuoterPage {
 
   async searchVehicle(term: string): Promise<void> {
     await this.locators.searchInput.fill(term);
+  }
+
+  /** Picks the first vehicle found ("any version"). The list shows "no results" while it is still searching. */
+  async selectFirstVehicle(): Promise<void> {
+    await this.locators.options.filter({ hasNotText: NO_RESULTS_OPTION }).first().click();
   }
 }
