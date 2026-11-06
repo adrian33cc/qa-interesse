@@ -25,7 +25,10 @@ jobs:
     # (a multi-file Allure report needs a web server to load its data).
     - name: Generate Allure HTML report
       if: ${{ !cancelled() }}
-      run: pnpm exec allure awesome allure-results --single-file --output allure-report --report-name "Interesse QA - Run #${{ github.run_number }}"
+      # Block scalar: in a plain YAML scalar, " #" starts a comment and truncates the command.
+      run: |
+        pnpm exec allure awesome allure-results --single-file --output allure-report \
+          --report-name "Interesse QA - Run #${{ github.run_number }}"
     - name: Upload Allure HTML report
       id: upload-allure
       if: ${{ !cancelled() }}
