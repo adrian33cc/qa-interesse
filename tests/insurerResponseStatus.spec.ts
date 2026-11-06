@@ -5,24 +5,23 @@ import { ContactFormPage } from '../pages/contact-form.page';
 import { QuoteResultsPage, type InsurerStatus } from '../pages/quote-results.page';
 import { QuoterPage } from '../pages/quoter.page';
 
-// Requirement 2 only. REQ-03 (brand-new car with invoice value) is not covered yet.
-const scenarios = INSURER_STATUS_SCENARIOS.filter(({ id }) => id === 'REQ-02');
-
 test.describe(
-  'REQ-02 Insurer response status (quoted / not quoted)',
+  'REQ-02/03 Insurer response status (quoted / not quoted)',
   {
-    tag: '@REQ-02',
     annotation: {
       type: 'description',
       description:
-        '**Objective:** validate which insurers are displayed in the quote.\n\n' +
+        '**Objective:** validate which insurers are displayed in the quote ' +
+        '(REQ-03 uses a brand-new vehicle with an invoice value).\n\n' +
         '**Expected result:** a report of which insurers responded. All of them should quote: ' +
         'Qualitas, Momento, ANA, GNP, Chubb, Atlas, HDI and Axa.',
     },
   },
   () => {
-    for (const { id, title, vehicle, postalCode, coverage, payment, expectedInsurers } of scenarios) {
-      test(`${id} ${title}`, async ({ page }, testInfo) => {
+    for (const scenario of INSURER_STATUS_SCENARIOS) {
+      const { id, title, vehicle, postalCode, invoiceValue, coverage, payment, expectedInsurers } = scenario;
+
+      test(`${id} ${title}`, { tag: `@${id}` }, async ({ page }, testInfo) => {
         test.slow(); // A quote waits for every insurer to answer.
 
         const quoter = new QuoterPage(page);
@@ -33,7 +32,7 @@ test.describe(
         await quoter.searchVehicle(vehicle.searchTerm);
         await quoter.selectFirstVehicle();
 
-        await contactForm.fill(createContact(), postalCode);
+        await contactForm.fill(createContact(), postalCode, invoiceValue);
         await contactForm.submit();
 
         await results.selectCoverage(coverage);

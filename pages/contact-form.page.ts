@@ -10,7 +10,8 @@ export class ContactFormPage {
     this.locators = contactFormLocators(page);
   }
 
-  async fill(contact: ContactData, postalCode: string): Promise<void> {
+  /** `invoiceValue` is only asked for brand-new vehicles. */
+  async fill(contact: ContactData, postalCode: string, invoiceValue?: number): Promise<void> {
     await this.locators.postalCode.fill(postalCode);
     await this.locators.email.fill(contact.email);
     await this.locators.firstName.fill(contact.firstName);
@@ -20,6 +21,10 @@ export class ContactFormPage {
     // Typed last: the name fields re-render the form and reset the masked phone input,
     // which also needs real keystrokes instead of fill().
     await this.locators.mobilePhone.pressSequentially(contact.phone, { delay: 60 });
+
+    if (invoiceValue !== undefined) {
+      await this.locators.invoiceValue.fill(String(invoiceValue));
+    }
   }
 
   async submit(): Promise<void> {

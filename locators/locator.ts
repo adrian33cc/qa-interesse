@@ -18,6 +18,8 @@ export const contactFormLocators = (page: Page) => ({
   paternalSurname: page.getByRole('textbox', { name: 'Apellido paterno' }),
   maternalSurname: page.getByRole('textbox', { name: 'Apellido materno' }),
   mobilePhone: page.getByRole('textbox', { name: 'Teléfono móvil *' }),
+  // Only rendered for brand-new vehicles; the input has no accessible name, only a placeholder.
+  invoiceValue: page.getByPlaceholder('Valor Factura', { exact: true }),
   submitButton: page.getByRole('button', { name: 'Cotizar', exact: true }),
 });
 
