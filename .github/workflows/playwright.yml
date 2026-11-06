@@ -15,8 +15,9 @@ jobs:
         node-version: lts/*
     - name: Install dependencies
       run: npm install -g pnpm && pnpm install
+    # Only the browsers enabled in playwright.config.ts projects.
     - name: Install Playwright Browsers
-      run: pnpm exec playwright install --with-deps
+      run: pnpm exec playwright install --with-deps chromium
     - name: Run Playwright tests
       run: pnpm exec playwright test
 
